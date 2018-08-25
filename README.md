@@ -14,13 +14,13 @@ Since the introduction of digital media formats, we have become spoiled in media
 
 ## Overview
 
-OptoGlitch is an Arduino project that attempts to artificially induce analogous errors by passing image data through an analogous optocoupler circuit. The optocoupler consists nothing more than a photo resistor, and LED (blue in our case) and an additional fixed resistor that acts as a voltage reference for the photo resistor input. The optocoupler is intentionally left exposed to capture as much environmental noise as possible. As a result, the output values can be bended by the simple utilization of an external light source such as a flash light.
+OptoGlitch is an Arduino project that attempts to artificially induce analogous errors by passing image data through an analogous optocoupler circuit. The optocoupler consists nothing more than a photo resistor, a LED (blue in our case) and an additional resistor that acts as a voltage reference for the photo resistor input. The optocoupler is intentionally left exposed to capture as much environmental noise as possible. As a result, the output values can be bended by the simple utilization of an external light source such as a flash light.
 
-The transmission of data is achieved by setting the LED to the brightness of the pixel value (ex. (255, 0, 120) would set the LED to 255 brightness, 0 brightness and 120 brightness). The photo resistor captures the brightness of the LED, and the software attempts match the photo resistor input to an color. Since the process is analogous, it is hence very proun to noise caused by external light sources. Additionally, the Arduino can only distinguish between a finite set of voltage levels. These, and many more factors result in errornous readings, which are then responsible for the glitch aesthetics.
+The transmission of data is achieved by setting the LED to the brightness of the pixel value (ex. (255, 0, 120) would set the LED to 255 brightness, 0 brightness and 120 brightness). The photo resistor captures the brightness of the LED, and the software attempts match the photo resistor input to its original pixel value. Since the process is analogous, it is very prone to noise caused by external light sources. Additionally, the Arduino can only distinguish between a finite set of voltage levels. These, and many more factors result in errornous readings, which are then responsible for the glitch aesthetics.
 
-Since the photo resistor often returns values vastly greater than the LED brightness, the software calibrates the photo resistor input through the computation of a standard deviation. Before any image is parsed, the Arduino performs a calibration process, in which is the photo resistor input is compared to all 256 LED brightness levels (0 - 255). From the received set of photo resistor inputs (256 inputs in total), the Arduino then computes are standard deviation. In the upcoming future, it is planned to implement calibration through the use of an lookup table.   
+Since the photo resistor readings don't exactly match the LED brightness, the software attempts to calibrate the photo resistor input through the computation of a standard deviation. Before any image is parsed, the Arduino performs a calibration process, in which is the photo resistor input is compared to all 256 LED brightness levels (0 - 255). From the received set of photo resistor inputs (256 inputs in total), the Arduino then computes the standard deviation. In the upcoming future, it is also planned to implement calibration through the use of an lookup table.   
 
-The intensity of error can be further reduced through the implementation of a mean reading. A mean reading is determined by calculating the average of a set of photo resistor inputs for a specific brightness, rather than just relying on a single sample. The amount of samples to calculate the mean reading can be specified through the serial console via the `set samples` command. For instance, `set samples 0` will skip the calculation of a mean reading, and simply rely on a single reading. Contrary, `set samples 100` will tell the Arduino to collect a total of 100 samples per brightness and then calculate the mean. By default, the `samples` property is set to 0.
+The intensity of error can be further reduced through the implementation of a mean reading. A mean reading is determined by calculating the average of a set of photo resistor inputs for a specific brightness, rather than just relying on a single sample. The amount of samples to calculate the mean can be specified through the serial console via the `set samples` command. For instance, `set samples 0` will skip the calculation of a mean and simply rely on a single reading. Contrary, `set samples 100` will tell the Arduino to collect a total of 100 samples per brightness and then calculate the mean. By default, the `samples` property is set to 0.
 
 Original:
 
@@ -52,7 +52,9 @@ Parse time: 06:03 min
 
 With sample rate, color accuracy and parse time rises.
 
-Further, we tend to reach the end of an threshold, as change in the mean reduces with more values provided. Finally, the Arduino provides one additional property that reduce error, being the `transition` property. Just like the mean sample rate, the transition property can be set through the serial console via the `set transition` command. The transition property defines the given time in ms for the LED to change its brightness. Giving the LED more time to change its brightness reduces the risk of developing artifacts from the previous pixel value. By default the transition time is set to 0, as such an error often provides desired aesthetics.
+Further, we tend to reach the end of an threshold, as change in the mean reduces with more values provided.
+
+Another property that can greatly reduce error is the `transition` property. Just like the mean sample rate, the transition property can be set through the serial console via the `set transition` command. The transition property defines the given time in ms for the LED to change its brightness. Giving the LED more time to change its brightness reduces the risk of developing artifacts from the previous pixel value. By default the transition time is set to 0, as such an error often provides desired aesthetics.
 
 Original:
 
@@ -90,9 +92,7 @@ Parse time: 03:00 min
 
 Parse time: 05:31 min
 
----
-
-Once again, the accuracy and time rises. Obviously an LED only needs finite time to fully change its brightness. As a result, it is isn't recommended to set this property to values above 10ms, as no notable improvements should be visible.
+Once again, the accuracy and time rises. Obviously an LED only a fixed ammount of time to fully change its brightness. As a result, it is isn't recommended to set this property to values above 10ms, as no notable improvements should be visible.
 
 Utilizing both properties will clearly yield the best results, if those are desired:
 
@@ -107,8 +107,6 @@ Original:
 ![Samples and Transition](docs/img/SamplesAndTransition.png)
 
 Parse time: 08:34 min
-
----
 
 ## Documentation
 
