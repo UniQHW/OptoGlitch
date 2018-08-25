@@ -91,13 +91,13 @@ tty = serial.Serial(args.port, args.baud)
 
 # Set optocoupler parameters
 if args.timeout > 0:
-    set("timeout", args.timeout)
+    set("timeout", args.timeout, tty)
 
 if args.transition > 0:
-    set("transition", args.transition)
+    set("transition", args.transition, tty)
 
 if args.samples > 0:
-    set("samples", args.samples)
+    set("samples", args.samples, tty)
 
 px = img.load()
 payload_size = (img.size[0] * img.size[1]) * 3
