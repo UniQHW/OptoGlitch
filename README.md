@@ -1,5 +1,7 @@
 # OptoGlitch
 
+![GIF](docs/img/WATCHME.gif)
+
 Turning an Arduino, a LED and a Photo Resistor into an physical glitch art filter!
 
 ## Showcase
