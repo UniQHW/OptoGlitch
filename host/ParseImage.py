@@ -83,6 +83,9 @@ args = arg_parser.parse_args()
 # Open image in pillow
 img = Image.open(args.image)
 
+if img.mode != 'RGB':
+    img = img.convert('RGB')
+
 # Initialize serial console
 tty = serial.Serial(args.port, args.baud)
 
