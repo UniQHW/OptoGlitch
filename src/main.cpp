@@ -25,6 +25,16 @@
 
 #define  ERROR_BLINK_INTERVAL_MS  250
 
+// success
+// ------------------------------------------
+// Informs of success via the serial console
+// ------------------------------------------
+void
+success()
+{
+    Serial.write(1);
+}
+
 // error
 // ------------------------------------------
 // Informs of an error via the serial console
@@ -69,7 +79,9 @@ loop()
     // Set command received
     if (input.length() >= 3 && input.substring(0, 3) == "set")
     {
-      if (!oc->apply_set_cmd(input)) {
+      if (oc->apply_set_cmd(input)) {
+        success();
+      } else {
         error("Invalid set property given!");
       }
     }
@@ -78,6 +90,7 @@ loop()
     else if (input.length() >= 5 && input.substring(0, 5) == "reset")
     {
       oc->reset_properties();
+      success();
     }
 
     // Parse command received
@@ -89,7 +102,9 @@ loop()
 
         if (payload_size)
         {
-          if (!oc->parse(payload_size)) {
+          if (oc->parse(payload_size)) {
+            success();
+          } else {
             error("Lost connecton to host!");
           }
         }
