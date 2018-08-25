@@ -15,7 +15,7 @@
 
 # Description:
 # A python script that parses any given image through the analougous and
-# errornous Arduino optocoupler, thereby distorting/corrupting the image
+# erroneous Arduino optocoupler, thereby distorting/corrupting the image
 # providing for a gltich effect.
 
 import os
