@@ -33,6 +33,7 @@ from PIL import Image
 # ------------------------------------------
 def set(arg1, arg2, tty):
     tty.write(str("set " + arg1 + " " + str(arg2)).encode('ASCII'))
+    tty.read()
 
 # reset
 # --------------------------------------------
