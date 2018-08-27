@@ -75,7 +75,7 @@ class Optocoupler
    int mean_reading();
 
    // Calibration
-   CalibrationMode calibration_mode  = stddev;
+   CalibrationMode calibration_mode           = stddev;
    unsigned int calibration_transmission_time = 10;
    unsigned int calibration_mean_samples      = 255;
 
