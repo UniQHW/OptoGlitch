@@ -31,6 +31,7 @@
 #define MIN_SET_ARG_SIZE              sizeof(SET_ARG_CALIBRATION_MODE) // Option with least characters
 
 // Calibartion mode arguments
+#define CALIBARTION_MODE_ARG_NONE     "none"   // No calibration
 #define CALIBARTION_MODE_ARG_STDDEV   "stddev" // Standard deviation
 #define CALIBARTION_MODE_ARG_LOOKUP   "lookup" // Lookup table
 
@@ -46,6 +47,7 @@ typedef unsigned long payload_size_t;
 // Calibration Modes
 enum CalibrationMode
 {
+  none,    // NO CALIBRATION (Colors will be very inacurate)
   stddev,  // Standard deviation
   lookup   // Mean Lookup table
 };
