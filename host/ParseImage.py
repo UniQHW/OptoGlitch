@@ -42,6 +42,7 @@ def set(arg1, arg2, tty):
 # --------------------------------------------
 def reset(tty):
     tty.write(b"reset")
+    tty.read()
 
 # initiate_parse
 # ---------------------------------------------
