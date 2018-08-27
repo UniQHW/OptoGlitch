@@ -281,7 +281,7 @@ Optocoupler::parse(payload_size_t payload_size)
   int reading;
   int std_dev;
 
-  if (calibration_mode == std_dev) {
+  if (calibration_mode == stddev) {
     std_dev = calibration_std_deviation();
   }
 
