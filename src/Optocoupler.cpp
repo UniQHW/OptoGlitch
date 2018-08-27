@@ -189,9 +189,15 @@ Optocoupler::parse(payload_size_t payload_size)
     delay(transmission_time);
 
     if (mean_samples) {
-      reading = mean_reading() - std_dev;
+      reading = mean_reading();
     } else {
-      reading = analogRead(rx) - std_dev;
+      reading = analogRead(rx);
+    }
+
+    if (reading > byte) {
+      reading -= std_dev;
+    } else if (reading < byte) {
+      reading += std_dev;
     }
 
     // Return parsed data to host
