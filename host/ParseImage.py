@@ -40,7 +40,7 @@ def set(arg1, arg2, tty):
 # Resets optocoupler parameters/properties via
 # the serial communication "reset" command
 # --------------------------------------------
-def reset():
+def reset(tty):
     tty.write(b"reset")
 
 # initiate_parse
@@ -99,7 +99,7 @@ if img.mode != 'RGB':
 tty = serial.Serial(args.port, args.baud)
 
 # Reset all properties
-reset()
+reset(tty)
 
 # Set optocoupler parameters
 if args.calibration != "stddev":
@@ -139,7 +139,7 @@ img.save("Parsed.png")
 img.close()
 
 # Send reset command
-reset()
+reset(tty)
 
 # Close tty
 tty.close()
