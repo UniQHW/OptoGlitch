@@ -39,6 +39,91 @@ trim_int_arg(String cmd, uint8_t int_arg_pos)
   return arg_int;
 }
 
+/** NoiseGenerator **/
+
+/* Public */
+
+// NoiseGenerator
+NoiseGenerator::NoiseGenerator()
+{
+  disable();
+}
+
+// disable()
+// ----------------------------
+// Disables the noise generator
+// ----------------------------
+void
+NoiseGenerator::disable()
+{
+  enabled = false;
+}
+
+// enabled()
+// -----------------------------------------
+// Returns if the noise generator is enabled
+// -----------------------------------------
+bool
+NoiseGenerator::is_enabled()
+{
+  return enabled;
+}
+
+// set_max_noise()
+// -------------------------------------------------
+// Sets the maximum noise that can be generated
+//  (and minimum noise to 0 if the object has been
+// enabled through this call)
+// -------------------------------------------------
+void
+NoiseGenerator::set_max_noise(uint8_t max)
+{
+  if (!max)
+  {
+    enabled = false;
+    return;
+  }
+
+  if (!enabled)
+  {
+    min_noise = 0;
+    enabled = true;
+  }
+
+  max_noise = max;
+}
+
+// set_max_noise()
+// -------------------------------------------------
+// Sets the minimum noise that can be generated
+//  (and maximum noise to 255 if the object has been
+// enabled through this call)
+// -------------------------------------------------
+void
+NoiseGenerator::set_min_noise(uint8_t min)
+{
+  if (!enabled)
+  {
+    max_noise = 255;
+    enabled = true;
+  }
+
+  min_noise = min;
+}
+
+// generate()
+// -------------------------------------------
+// Generates a random value with a random sign
+// in the range of min_noise to max_noise
+// -------------------------------------------
+int
+NoiseGenerator::generate()
+{
+  return ((int) random(2) * 2 - 1) * random(min_noise, max_noise+1);
+}
+
+/** Optocoupler **/
+
 /* PUBLIC */
 
 // Optocoupler
@@ -54,9 +139,9 @@ Optocoupler::Optocoupler(uint8_t tx, uint8_t rx) :
 };
 
 // reset_properties
-// -----------------------------------------------------
-// Sets all class properties back to their default value
-// -----------------------------------------------------
+// ------------------------------------------------------
+// Sets all class properties back to their default values
+// ------------------------------------------------------
 void
 Optocoupler::reset_properties()
 {
@@ -64,6 +149,7 @@ Optocoupler::reset_properties()
   transmission_time  = DEFAULT_TRANSMISSION_TIME;
   mean_samples       = DEFAULT_MEAN_SAMPLES;
   calibration_mode   = DEFAULT_CALIBRATION_MODE;
+  noise_generator.disable();
 }
 
 /*
@@ -156,6 +242,29 @@ Optocoupler::apply_set_cmd(String cmd)
     }
   }
 
+  // Set max noise generation
+  else if (set_args.substring(0, sizeof(SET_ARG_NOISE_GENERATOR_MAX)) == APPEND_SPACE(SET_ARG_NOISE_GENERATOR_MAX))
+  {
+    int ret = trim_int_arg(set_args, sizeof(SET_ARG_NOISE_GENERATOR_MAX));
+
+    if (ret >= 0 && ret < 255) {
+      noise_generator.set_max_noise(ret);
+    } else {
+      return false;
+    }
+  }
+
+  // Set min noise generation
+  else if (set_args.substring(0, sizeof(SET_ARG_NOISE_GENERATOR_MIN)) == APPEND_SPACE(SET_ARG_NOISE_GENERATOR_MIN))
+  {
+    int ret = trim_int_arg(set_args, sizeof(SET_ARG_NOISE_GENERATOR_MIN));
+
+    if (ret >= 0 && ret < 255) {
+      noise_generator.set_min_noise(ret);
+    } else {
+      return false;
+    }
+  }
 
   return true;
 }
@@ -209,6 +318,10 @@ Optocoupler::parse(payload_size_t payload_size)
       } else if (reading < byte) {
         reading += std_dev;
       }
+    }
+
+    if (noise_generator.is_enabled()) {
+      reading += noise_generator.generate();
     }
 
     // Return parsed data to host

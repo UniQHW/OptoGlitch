@@ -28,7 +28,9 @@
 #define SET_ARG_TIMEOUT               "timeout"                        // Set communication timeout
 #define SET_ARG_TRANSITION_TIME       "transition"                     // Set LED transition time
 #define SET_ARG_MEAN_SAMPLES          "samples"                        // Set size of PR sample pool to determine a mean value
-#define MIN_SET_ARG_SIZE              sizeof(SET_ARG_CALIBRATION_MODE) // Option with least characters
+#define SET_ARG_NOISE_GENERATOR_MAX   "nmax"                           // Maximum random noise that can be generated
+#define SET_ARG_NOISE_GENERATOR_MIN   "nmin"                           // Minimum random noise that must be generated
+#define MIN_SET_ARG_SIZE              sizeof(SET_ARG_NOISE_GENERATOR_MAX) // Option with least characters
 
 // Calibartion mode arguments
 #define CALIBARTION_MODE_ARG_NONE     "none"   // No calibration
@@ -50,6 +52,30 @@ enum CalibrationMode
   none,    // NO CALIBRATION (Colors will be very inacurate)
   stddev,  // Standard deviation
   lookup   // Mean Lookup table
+};
+
+// Optocoupler
+// -----------------------------------------
+// A pseudo-random noise generator that adds
+// or subtracts random values from provided
+// data
+// -----------------------------------------
+class NoiseGenerator
+{
+ public:
+   NoiseGenerator();
+
+   bool is_enabled();
+   void set_max_noise(uint8_t max);
+   void set_min_noise(uint8_t min);
+
+   int generate();
+   void disable();
+
+ private:
+   int16_t max_noise;
+   int16_t min_noise;
+   bool enabled;
 };
 
 // Optocoupler
@@ -83,4 +109,7 @@ class Optocoupler
 
    int calibration_mean_reading();
    int calibration_std_deviation();
+
+   // Digital Randomization
+   NoiseGenerator noise_generator;
 };
