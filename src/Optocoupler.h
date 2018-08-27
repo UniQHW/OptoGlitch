@@ -22,7 +22,6 @@
 #pragma once
 
 #define APPEND_SPACE(STR)             STR " "
-#define APPEND_NEWLINE(STR)           STR "\n"
 
 // Set Arguments
 #define SET_ARG_CALIBRATION_MODE      "cmode"                          // Set calibration mode
