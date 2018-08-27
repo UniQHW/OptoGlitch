@@ -63,7 +63,7 @@ class Optocoupler
    bool apply_set_cmd(String cmd);  // Sets parameters via a provded serial "set" command
    bool parse(payload_size_t payload_size); // Accepts and parses a serial data payload through the optocoupler
 
- // private:
+ private:
    uint8_t tx; // LED
    uint8_t rx; // Photo Resistor
 
