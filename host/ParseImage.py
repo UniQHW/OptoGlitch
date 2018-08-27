@@ -48,11 +48,16 @@ def reset():
 # Sets the arduino into parse mode, where it
 # accepts a payload of given size to be parsed.
 # ---------------------------------------------
-def initiate_parse(size, tty):
+def initiate_parse(size, tty, calibration):
     tty.write(str('parse ' + str(size)).encode('ASCII'))
-    print("Waiting for calibration...")
+
+    if calibration:
+        print("Waiting for calibration...")
+
     tty.read() # Response on serial console signals that the calibration is complete
-    print("Calibration completed, awaiting payload")
+
+    if calibration:
+        print("Calibration completed, awaiting payload")
 
 # parse
 # -----------------------------------------------
@@ -74,7 +79,7 @@ arg_parser = argparse.ArgumentParser(description="Parses images through the Ardu
 arg_parser.add_argument('image', type = str, metavar = 'img', help = "Path to an image file")
 arg_parser.add_argument('-p', '--port', type = str, default = '/dev/ttyACM0', help = "Serial port (Default '/dev/ttyACM0')")
 arg_parser.add_argument('-b', '--baud', type = str, default = 115200, help = "Baud rate (Default 115200)")
-arg_parser.add_argument('-c', '--calibration', type = str, help = "Calibration mode (None, stddev, lookup)")
+arg_parser.add_argument('-c', '--calibration', type = str, default = 'stddev', help = "Calibration mode (none, stddev, lookup)")
 arg_parser.add_argument('-dt', '--timeout', type = int, default = 0, help = "Device serial communication timeout (Default 0, no timeout)")
 arg_parser.add_argument('-ht', '--host_timeout', type = int, default = 0, help = "Host serial communication timeout (Default 0, no timeout)")
 arg_parser.add_argument('-t', '--transition', type = int, default = 0, help = "Transition time for LED (Default 0, no transition time)")
@@ -94,7 +99,7 @@ if img.mode != 'RGB':
 tty = serial.Serial(args.port, args.baud)
 
 # Set optocoupler parameters
-if args.calibration != "":
+if args.calibration != "stddev":
     set("calibration", args.calibration, tty)
 
 if args.timeout > 0:
@@ -116,7 +121,7 @@ px = img.load()
 payload_size = (img.size[0] * img.size[1]) * 3
 
 # Begin parsing!
-initiate_parse(payload_size, tty)
+initiate_parse(payload_size, tty, (args.calibration != "none"))
 
 print("Parsing image...")
 progress_bar = tqdm(total=img.size[0] * img.size[1])
