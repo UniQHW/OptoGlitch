@@ -312,7 +312,7 @@ Optocoupler::parse(payload_size_t payload_size)
       reading = analogRead(rx);
     }
 
-    if (calibration_mode == std_dev) {
+    if (calibration_mode == stddev) {
       if (reading > byte) {
         reading -= std_dev;
       } else if (reading < byte) {
