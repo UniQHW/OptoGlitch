@@ -119,6 +119,7 @@ NoiseGenerator::set_min_noise(uint8_t min)
 int
 NoiseGenerator::generate()
 {
+  randomSeed(millis());
   return ((int) random(2) * 2 - 1) * random(min_noise, max_noise+1);
 }
 
