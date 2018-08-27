@@ -103,7 +103,7 @@ reset(tty)
 
 # Set optocoupler parameters
 if args.calibration != "stddev":
-    set("calibration", args.calibration, tty)
+    set("cmode", args.calibration, tty)
 
 if args.timeout > 0:
     set("timeout", args.timeout, tty)

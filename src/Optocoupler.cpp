@@ -186,17 +186,17 @@ Optocoupler::apply_set_cmd(String cmd)
     String calibration_mode_str = set_args.substring(sizeof(SET_ARG_CALIBRATION_MODE));
 
     // No calibration
-    if (calibration_mode_str == CALIBARTION_MODE_ARG_NONE) {
+    if (calibration_mode_str == APPEND_NEWLINE(CALIBARTION_MODE_ARG_NONE)) {
       calibration_mode = none;
     }
 
     // Standard deviation
-    else if (calibration_mode_str == CALIBARTION_MODE_ARG_STDDEV) {
+    else if (calibration_mode_str == APPEND_NEWLINE(CALIBARTION_MODE_ARG_STDDEV)) {
       calibration_mode = stddev;
     }
 
     // Lookup table
-    else if (calibration_mode_str == CALIBARTION_MODE_ARG_LOOKUP) {
+    else if (calibration_mode_str == APPEND_NEWLINE(CALIBARTION_MODE_ARG_LOOKUP)) {
       calibration_mode = lookup;
     }
 
