@@ -67,8 +67,18 @@ class Optocoupler
    uint8_t tx; // LED
    uint8_t rx; // Photo Resistor
 
-   int timeout;
-   int transmission_time;
-   int mean_samples;
-   CalibrationMode calibration_mode = stddev;
+   // Input Accuracy
+   unsigned int timeout;
+   unsigned int transmission_time;
+   unsigned int mean_samples;
+
+   int mean_reading();
+
+   // Calibration
+   CalibrationMode calibration_mode  = stddev;
+   unsigned int calibration_transmission_time = 10;
+   unsigned int calibration_mean_samples      = 255;
+
+   int calibration_mean_reading();
+   int calibration_std_deviation();
 };

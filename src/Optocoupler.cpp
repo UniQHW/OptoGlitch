@@ -19,7 +19,6 @@
 
 #include <Arduino.h>
 #include "Pins.h"
-#include "Calibration.h"
 #include "Optocoupler.h"
 
 // trim_int_arg
@@ -39,6 +38,8 @@ trim_int_arg(String cmd, uint8_t int_arg_pos)
 
   return arg_int;
 }
+
+/* PUBLIC */
 
 // Optocoupler
 // -------------------------------------------------------------
@@ -164,7 +165,7 @@ Optocoupler::parse(payload_size_t payload_size)
 {
   // Get standard deviation
   int reading;
-  int std_dev = std_deviation(rx, TRANSITION_TIME_MS);
+  int std_dev = calibration_std_deviation();
 
   // Tell host that we're ready for the payload!
   Serial.write(1);
@@ -188,7 +189,7 @@ Optocoupler::parse(payload_size_t payload_size)
     delay(transmission_time);
 
     if (mean_samples) {
-      reading = mean_reading(rx, mean_samples) - std_dev;
+      reading = mean_reading() - std_dev;
     } else {
       reading = analogRead(rx) - std_dev;
     }
@@ -205,4 +206,62 @@ Optocoupler::parse(payload_size_t payload_size)
 
   analogWrite(tx, 0);
   return true;
+}
+
+/* PRIVATE */
+
+// mean_reading
+// -------------------------------------------
+// Calculates the average value from a pool of
+// photo resistor inputs
+// -------------------------------------------
+int
+Optocoupler::mean_reading()
+{
+  unsigned long sum = 0;
+
+  for (unsigned int i = 0; i < mean_samples; i++) {
+    sum += analogRead(rx);
+  }
+
+  return sum / mean_samples;
+}
+
+// calibration_mean_reading
+// ----------------------------------------
+// Same as mean_reading with the exception
+// that this function utilizes the private
+// calibration_* member variables
+// ----------------------------------------
+int
+Optocoupler::calibration_mean_reading()
+{
+  unsigned long sum = 0;
+
+  for (unsigned int i = 0; i < calibration_mean_samples; i++) {
+    sum += analogRead(rx);
+  }
+
+  return sum / calibration_mean_samples;
+}
+
+// calibration_std_deviantion
+// ------------------------------------------------------
+// Computes the standard deviation between LED output and
+// mean photo resistor input
+// ------------------------------------------------------
+int
+Optocoupler::calibration_std_deviation()
+{
+  unsigned long sum = 0;
+
+  for (int16_t i = 255; i >= 0; i--)
+  {
+      analogWrite(LED_TX, i);
+      delay(calibration_transmission_time);
+
+      sum += pow(abs(calibration_mean_reading() - i), 2);
+  }
+
+  return sqrt(sum / 256);
 }
