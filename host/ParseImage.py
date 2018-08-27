@@ -98,6 +98,9 @@ if img.mode != 'RGB':
 # Initialize serial console
 tty = serial.Serial(args.port, args.baud)
 
+# Reset all properties
+reset()
+
 # Set optocoupler parameters
 if args.calibration != "stddev":
     set("calibration", args.calibration, tty)
