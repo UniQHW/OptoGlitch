@@ -24,13 +24,13 @@ The optocoupler consists nothing more than a photo resistor, a LED (blue in our 
 
 The schematic looks as it follows:
 
-![Schematic](docs/img/Schematic.png)
+<img src="docs/img/Schematic.png" width="500" />
 
 Since the choice of analog pins is interchangeable, the schematic generalizes them. In the case of this project, the currently utilized pins can be found in the [pin header](src/Pins.h).
 
 Since I was so satisfied with the results delivered by this project, I have also decided to 3D print an enclosure for the circuitry. The wiring estimates the following sketch:
 
-![Wiring](docs/img/Wiring.png)
+<img src="docs/img/Wiring.png" width="300" />
 
 In its enclosure, the device turned out to look and function quite neatly:
 
