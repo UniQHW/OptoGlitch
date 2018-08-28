@@ -281,9 +281,15 @@ Optocoupler::parse(payload_size_t payload_size)
   // Get standard deviation
   int reading;
   int std_dev;
+  uint16_t *lookup_table = NULL;
 
-  if (calibration_mode == stddev) {
+  if (calibration_mode == stddev)
+  {
     std_dev = calibration_std_deviation();
+  }
+  else if (calibration_mode == lookup)
+  {
+    lookup_table = calibration_lookup_table();
   }
 
   // Tell host that we're ready for the payload!
@@ -313,11 +319,42 @@ Optocoupler::parse(payload_size_t payload_size)
       reading = analogRead(rx);
     }
 
-    if (calibration_mode == stddev) {
+    if (calibration_mode == stddev)
+    {
       if (reading > byte) {
         reading -= std_dev;
       } else if (reading < byte) {
         reading += std_dev;
+      }
+    }
+    else if (calibration_mode == lookup)
+    {
+      if (reading < lookup_table[0])
+      {
+        reading = 0;
+      }
+      else if (reading > lookup_table[255])
+      {
+        reading = 255;
+      }
+      else
+      {
+        for (uint8_t i = 0; i < 256; i++)
+        {
+          if (lookup_table[i] >= reading)
+          {
+            if(i > 0 && (reading - lookup_table[i-1]) < (lookup_table[i] - reading) )
+            {
+              reading = i-1;
+              break;
+            }
+            else
+            {
+              reading = i;
+              break;
+            }
+          }
+        }
       }
     }
 
@@ -336,6 +373,8 @@ Optocoupler::parse(payload_size_t payload_size)
   }
 
   analogWrite(tx, 0);
+
+  delete [] lookup_table;
   return true;
 }
 
@@ -395,4 +434,19 @@ Optocoupler::calibration_std_deviation()
   }
 
   return sqrt(sum / 256);
+}
+
+uint16_t *
+Optocoupler::calibration_lookup_table()
+{
+  uint16_t * ret = new uint16_t[256];
+
+  for (int16_t i = 255; i >= 0; i--)
+  {
+    analogWrite(LED_TX, i);
+    delay(calibration_transmission_time);
+    ret[i] = calibration_mean_reading();
+  }
+
+  return ret;
 }

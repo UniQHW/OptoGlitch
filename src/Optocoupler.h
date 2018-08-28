@@ -37,6 +37,9 @@
 #define CALIBARTION_MODE_ARG_STDDEV   "stddev" // Standard deviation
 #define CALIBARTION_MODE_ARG_LOOKUP   "lookup" // Lookup table
 
+// LOOKUP TABLE SIZE
+#define LOOKUP_TABLE_SIZE         1024 // Max possble analog read values
+
 // Default properties
 #define DEFAULT_TIMEOUT           0
 #define DEFAULT_TRANSMISSION_TIME 0
@@ -103,12 +106,15 @@ class Optocoupler
    int mean_reading();
 
    // Calibration
-   CalibrationMode calibration_mode           = stddev;
-   unsigned int calibration_transmission_time = 10;
-   unsigned int calibration_mean_samples      = 255;
+   CalibrationMode calibration_mode                 = stddev;
+   unsigned int calibration_transmission_time       = 10;
+   unsigned int calibration_mean_samples            = 255;
 
    int calibration_mean_reading();
    int calibration_std_deviation();
+
+ public: // DEBUG
+   uint16_t *calibration_lookup_table();
 
    // Digital Randomization
    NoiseGenerator noise_generator;
