@@ -16,11 +16,75 @@ Since the introduction of digital media formats, we have become spoiled in media
 
 ## Overview
 
-OptoGlitch is an Arduino project that attempts to artificially induce analogous errors by passing image data through an analogous optocoupler circuit. The optocoupler consists nothing more than a photo resistor, a LED (blue in our case) and an additional resistor that acts as a voltage reference for the photo resistor input. The optocoupler is intentionally left exposed to capture as much environmental noise as possible. As a result, the output values can be bended by the simple utilization of an external light source such as a flash light.
+OptoGlitch is an Arduino project that attempts to artificially induce analogous errors by passing image data through an analogous optocoupler circuit.
 
-The transmission of data is achieved by setting the LED to the brightness of the pixel value (ex. (255, 0, 120) would set the LED to 255 brightness, 0 brightness and 120 brightness). The photo resistor captures the brightness of the LED, and the software attempts match the photo resistor input to its original pixel value. Since the process is analogous, it is very prone to noise caused by external light sources. Additionally, the Arduino can only distinguish between a finite set of voltage levels. These, and many more factors result in erroneous readings, which are then responsible for the glitch aesthetics.
 
-Since the photo resistor readings don't exactly match the LED brightness, the software attempts to calibrate the photo resistor input through the computation of a standard deviation. Before any image is parsed, the Arduino performs a calibration process, in which is the photo resistor input is compared to all 256 LED brightness levels (0 - 255). From the received set of photo resistor inputs (256 inputs in total), the Arduino then computes the standard deviation. In the upcoming future, it is also planned to implement calibration through the use of an lookup table.   
+### Hardware
+The optocoupler consists nothing more than a photo resistor, a LED (blue in our case) and two resistors, where one drives the LED (220 Ohm) and the other one acts as a voltage reference for the photo resistor input (330 Ohm).
+
+The schematic looks as it follows:
+
+![Schematic](docs/img/Schematic.png)
+
+Since the choice of analog pins is interchangeable, the schematic generalizes them. In the case of this project, the currently utilized pins can be found in the [pin header](src/Pins.h).
+
+Since I was so satisfied with the results delivered by this project, I have also decided to 3D print an enclosure for the circuitry. The wiring estimates the following sketch:
+
+![Wiring](docs/img/Wiring.png)
+
+In its enclosure, the device turned out to look and function quite neatly:
+
+![3D Printed Enclosure](docs/img/VideoFrame.png)
+
+Notice that the photo resistor and LED are raised at a 45 degree angle. This grants easier access for manual interference and allows the photo resistor to capture environmental noise.
+
+The STL files for the 3D printed enclosure can be found here:
+
+- [top]()
+- [bottom]()
+
+### Software
+
+The transmission of data is achieved by setting the LED to the brightness of the pixel value (ex. (255, 0, 120) would set the LED to 255 brightness, 0 brightness and 120 brightness). The photo resistor captures the brightness of the LED, and the software attempts match the photo resistor input to its original pixel value through various calibration methods. Since the process is analogous, it is very prone to noise caused by external light sources. Additionally, the Arduino can only distinguish between a finite set of voltage levels. These, and many more factors result in erroneous readings, which are then responsible for the glitch aesthetics.
+
+#### Calibration
+Since the photo resistor readings don't exactly match the LED brightness, the software attempts to calibrate the photo resistor input through the computation of a standard deviation. The Arduino software provides a total of two calibration modes, each compensating for the value deviation in a different way.
+
+##### Standard Deviation
+
+Before any image is parsed, the Arduino performs a calibration process, in which is a mean photo resistor inputs is compared to all 256 LED brightness levels (0 - 255). From the received set of mean readings (256 values in total), the Arduino then computes the standard deviation between the mean readings and the LED brightness that they should match.
+
+Once the image parsing process begins, all photo resistor values are subtracted by- or added to the standard deviation, depending whether the photo resistor value is smaller or greater than the LED brightness.
+
+To set the calibration mode to standard deviation, pass the following serial command while the device is idling:
+
+```
+set cmode stddev
+```
+
+##### Lookup Table
+
+Just as with the standard deviation The lookup table calibibration takes place before an image is parsed. The lookup table calibration loads a total of 256 mean photo resistor readings, one for each LED brightness, into an array.
+
+Once the image parsing process begins, the photo resistor value is mapped to its nearest matching array entry entry. The array index is then selected as the value that matches the photo resistor input.
+
+**The lookup table calibration is the default calibration mode** and is vastly superior to the standard deviation when it comes to color accuracy. Its slight drawback comes from the prolonged parsing time.
+
+To set the calibration mode to lookup table, pass the following serial command while the device is idling:
+
+```
+set cmode lookup
+```
+
+##### No calibration
+
+If one desires to utilize photo resistor readings in their pure form, calibration can be disabled with the following serial command:
+
+```
+set cmode none
+```
+
+##### Other properties
 
 The intensity of error can be further reduced through the implementation of a mean reading. A mean reading is determined by calculating the average of a set of photo resistor inputs for a specific brightness, rather than just relying on a single sample. The amount of samples to calculate the mean can be specified through the serial console via the `set samples` command. For instance, `set samples 0` will skip the calculation of a mean and simply rely on a single reading. Contrary, `set samples 100` will tell the Arduino to collect a total of 100 samples per brightness and then calculate the mean. By default, the `samples` property is set to 0.
 
@@ -30,7 +94,7 @@ Original:
 
 ---
 
-`set samples 0`:
+`set samples 0` on standard deviation:
 
 ![No Args](docs/img/NoArgs.png)
 
@@ -38,7 +102,7 @@ Parse time: 00:30 Seconds
 
 ---
 
-`set samples 50`:
+`set samples 50` on standard deviation:
 
 ![50 Samples](docs/img/50Samples.png)
 
@@ -46,7 +110,7 @@ Parse time: 03:26 min
 
 ---
 
-`set samples 100`:
+`set samples 100` on standard deviation:
 
 ![100 samples](docs/img/100Samples.png)
 
@@ -64,7 +128,7 @@ Original:
 
 ---
 
-`set transition 0`
+`set transition 0` on standard deviation:
 
 ![No Args](docs/img/NoArgs.png)
 
@@ -72,7 +136,7 @@ Parse time: 00:30 Seconds
 
 ---
 
-`set transition 1`
+`set transition 1`  on standard deviation:
 
 ![1 ms transition](docs/img/1MSTransition.png)
 
@@ -80,7 +144,7 @@ Parse time: 01:00 min
 
 ---
 
-`set transition 5`
+`set transition 5` on standard deviation:
 
 ![5 ms transition](docs/img/5MSTransition.png)
 
@@ -88,7 +152,7 @@ Parse time: 03:00 min
 
 ---
 
-`set transition 10`
+`set transition 10` on standard deviation:
 
 ![10 ms transition](docs/img/10MSTransition.png)
 
@@ -104,7 +168,7 @@ Original:
 
 ---
 
-`set samples 100` and `set transition 5`:
+`set samples 100` and `set transition 5` on standard deviation:
 
 ![Samples and Transition](docs/img/SamplesAndTransition.png)
 
