@@ -44,7 +44,7 @@
 #define DEFAULT_TIMEOUT           0
 #define DEFAULT_TRANSMISSION_TIME 0
 #define DEFAULT_MEAN_SAMPLES      0
-#define DEFAULT_CALIBRATION_MODE  stddev
+#define DEFAULT_CALIBRATION_MODE  lookup
 
 // Typedefs
 typedef unsigned long payload_size_t;
@@ -106,7 +106,7 @@ class Optocoupler
    int mean_reading();
 
    // Calibration
-   CalibrationMode calibration_mode                 = stddev;
+   CalibrationMode calibration_mode;
    unsigned int calibration_transmission_time       = 10;
    unsigned int calibration_mean_samples            = 255;
 

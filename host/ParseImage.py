@@ -80,7 +80,7 @@ arg_parser = argparse.ArgumentParser(description="Parses images through the Ardu
 arg_parser.add_argument('image', type = str, metavar = 'img', help = "Path to an image file")
 arg_parser.add_argument('-p', '--port', type = str, default = '/dev/ttyACM0', help = "Serial port (Default '/dev/ttyACM0')")
 arg_parser.add_argument('-b', '--baud', type = str, default = 115200, help = "Baud rate (Default 115200)")
-arg_parser.add_argument('-c', '--calibration', type = str, default = 'stddev', help = "Calibration mode (none, stddev, lookup)")
+arg_parser.add_argument('-c', '--calibration', type = str, default = 'lookup', help = "Calibration mode (none, stddev, lookup)")
 arg_parser.add_argument('-dt', '--timeout', type = int, default = 0, help = "Device serial communication timeout (Default 0, no timeout)")
 arg_parser.add_argument('-ht', '--host_timeout', type = int, default = 0, help = "Host serial communication timeout (Default 0, no timeout)")
 arg_parser.add_argument('-t', '--transition', type = int, default = 0, help = "Transition time for LED (Default 0, no transition time)")
@@ -103,7 +103,7 @@ tty = serial.Serial(args.port, args.baud)
 reset(tty)
 
 # Set optocoupler parameters
-if args.calibration != "stddev":
+if args.calibration != "lookup":
     set("cmode", args.calibration, tty)
 
 if args.timeout > 0:
