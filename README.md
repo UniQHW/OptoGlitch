@@ -41,7 +41,7 @@ Notice that the photo resistor and LED are raised at a 45 degree angle. This gra
 The STL files for the 3D printed enclosure can be found here:
 
 - [top](stl/Top.stl)
-- [bottom](stl/Bop.stl)
+- [bottom](stl/Bottom.stl)
 
 ### Software
 
