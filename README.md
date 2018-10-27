@@ -12,15 +12,15 @@ Turning an Arduino, a LED and a Photo Resistor into an physical glitch art filte
 
 It is absolutely no secret that I have an unhealthy obsession with the aesthetics manifested by analogous errors. Despite the fact that the VHS Cassette was already being replaced by its digital competitor, the DVD, by the time I was born, I was still fortunate enough to become one of the last witnesses of the legendary video format. The time stamps, the "play" button, the washed out colors and static noise will always invoke a warm feeling of nostalgia for me. And it is due to this induced nostalgia, that my desire in glitch art strives after the analogous error.
 
-Since the introduction of digital media formats, we have become spoiled in media quality. As an result, we now treat analogous error as an visual aesthetic, and ironically often attempt to digital recreate it. I myself must obviously admit, that I proudly contribute to the digital recreation of analogous error, in form of glitch art. While I have yet to get my hands on a proper VHS recorder or camcorder, I have attempted to improvise by finding alternate ways of analogous data transfer that do not require access to the rather complex electronics found in a VHS recorder. And that is exactly what has lead to this project. While the results certainly vary from VHS glitches, I must admit that I am still very satisfied by the errors caused through analogous noise.
+Since the introduction of digital media formats, we have become spoiled in media quality. As an result, we now treat analogous error as an visual aesthetic, and ironically often attempt to digitally recreate it. I myself must obviously admit, that I proudly contribute to the digital recreation of analogous error, in form of glitch art. While I have yet to get my hands on a proper VHS recorder or camcorder, I have attempted to improvise by finding alternate ways of analogous data transfer that do not require access to the rather complex electronics found in a VHS recorder. And that is exactly what has lead to this project. While the results certainly vary from VHS glitches, I must admit that I am still very satisfied by the errors caused through analogous noise.
 
 ## Overview
 
-OptoGlitch is an Arduino project that attempts to artificially induce analogous errors by passing image data through an analogous optocoupler circuit.
+OptoGlitch is an Arduino project that attempts to artificially induce analogous errors by passing image data through an optocoupler circuit.
 
 
 ### Hardware
-The optocoupler consists nothing more than a photo resistor, a LED (blue in our case) and two resistors, where one drives the LED (220 Ohm) and the other one acts as a voltage reference for the photo resistor input (330 Ohm).
+The optocoupler consists of nothing more than a photo resistor, a LED (blue in our case) and two resistors, where one drives the LED (220 Ohm) and the other acts as a voltage reference for the photo resistor input (330 Ohm).
 
 The schematic looks as it follows:
 
@@ -28,7 +28,7 @@ The schematic looks as it follows:
 
 Since the choice of analog pins is interchangeable, the schematic generalizes them. In the case of this project, the currently utilized pins can be found in the [pin header](src/Pins.h).
 
-Since I was so satisfied with the results delivered by this project, I have also decided to 3D print an enclosure for the circuitry. The wiring estimates the following sketch:
+Since I was so satisfied with the results delivered by this project, I have also decided to 3D print an enclosure for the circuitry. The internal wiring estimates the following sketch:
 
 <img src="docs/img/Wiring.png" width="300" />
 
@@ -41,18 +41,18 @@ Notice that the photo resistor and LED are raised at a 45 degree angle. This gra
 The STL files for the 3D printed enclosure can be found here:
 
 - [top](stl/Top.stl)
-- [bottom](stl/Bop.stl)
+- [bottom](stl/Bottom.stl)
 
 ### Software
 
-The transmission of data is achieved by setting the LED to the brightness of the pixel value (ex. (255, 0, 120) would set the LED to 255 brightness, 0 brightness and 120 brightness). The photo resistor captures the brightness of the LED, and the software attempts match the photo resistor input to its original pixel value through various calibration methods. Since the process is analogous, it is very prone to noise caused by external light sources. Additionally, the Arduino can only distinguish between a finite set of voltage levels. These, and many more factors result in erroneous readings, which are then responsible for the glitch aesthetics.
+The transmission of data is achieved by setting the LED to the brightness of the pixel value (ex. (255, 0, 120) would first set the LED to 255 brightness then 0 brightness and then 120 brightness). The photo resistor captures the brightness of the LED, and the software attempts match the photo resistor input to its original pixel value through various calibration methods. Since the process is analogous, it is prone to noise caused by external light sources. Additionally, the Arduino can only distinguish between a finite set of voltage levels. These, and many more factors result in erroneous readings, which are then responsible for the glitch aesthetics.
 
 #### Calibration
-Since the photo resistor readings don't exactly match the LED brightness, the software attempts to calibrate the photo resistor input through the computation of a standard deviation. The Arduino software provides a total of two calibration modes, each compensating for the value deviation in a different way.
+Since the photo resistor readings don't exactly match the LED brightness, the Arduino software offers a total of two calibration modes, each compensating for the value deviation in a different way.
 
 ##### Standard Deviation
 
-Before any image is parsed, the Arduino performs a calibration process, in which is a mean photo resistor inputs is compared to all 256 LED brightness levels (0 - 255). From the received set of mean readings (256 values in total), the Arduino then computes the standard deviation between the mean readings and the LED brightness that they should match.
+With this calibration method, all 256 LED brightness levels (0 - 255) are compared to the photo resistor input prior image parsing. From the received set of mean readings (256 values in total), the Arduino then computes the standard deviation between the mean readings and the LED brightness that they should match.
 
 Once the image parsing process begins, all photo resistor values are subtracted by- or added to the standard deviation, depending whether the photo resistor value is smaller or greater than the LED brightness.
 
@@ -64,9 +64,9 @@ set cmode stddev
 
 ##### Lookup Table
 
-Just as with the standard deviation The lookup table calibibration takes place before an image is parsed. The lookup table calibration loads a total of 256 mean photo resistor readings, one for each LED brightness, into an array.
+Just as with the standard deviation, the lookup table calibibration takes place before an image is parsed. The lookup table calibration loads a total of 256 photo resistor readings, one for each LED brightness, into an array.
 
-Once the image parsing process begins, the photo resistor value is mapped to its nearest matching array entry entry. The array index is then selected as the value that matches the photo resistor input.
+Once the image parsing process begins, the photo resistor value is mapped to its nearest matching array entry.
 
 **The lookup table calibration is the default calibration mode** and is vastly superior to the standard deviation when it comes to color accuracy. Its slight drawback comes from the prolonged parsing time.
 
