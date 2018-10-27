@@ -176,15 +176,14 @@ Parse time: 08:34 min
 
 ### Usage
 
-Since this project revolves primarily around the distortion of image files, I have written a host sided tool in python called [ParseImage.py](host/ParseImage.py), which reads an image and parses each pixel by pixel through the optocoupler via serial communication.
+Since this project revolves primarily around the distortion of image files, I have written a host sided tool in python called [ParseImage.py](host/ParseImage.py), which reads an image file and parses each pixel by pixel through the OptoGlitch via serial communication.
 
-The following python libraries have are utilized by [ParseImage.py](host/ParseImage.py):
+The following python libraries are required by [ParseImage.py](host/ParseImage.py):
 
 - [pySerial](https://pyserial.readthedocs.io/en/latest/index.html)
 - [Pillow](https://pillow.readthedocs.io/en/latest/)
 
-In addition to parsing, the tool provides parameters that permit the user to set specific firmware properties (calibration mode, transmission time, mean samples etc.) for the parsing session.
-
+Usage:
 ```
 usage: ParseImage.py [-h] [-p PORT] [-b BAUD] [-c CALIBRATION] [-dt TIMEOUT]
                      [-ht HOST_TIMEOUT] [-t TRANSITION] [-s SAMPLES]
@@ -220,15 +219,13 @@ optional arguments:
                         Minimum digitally generated noise
 ```
 
+#### Example
+
 In the following example we parse an image with the calibration mode set to the **standard deviation**, the transmission time set to **1 ms** and the mean sample rate set at **50 samples**:
 
 ```
 python ParseImage.py -c stddev -t 1 -s 50 image.png
 ```
-
-## Documentation
-
-A hardware and software documentation is planned
 
 ## License
 
