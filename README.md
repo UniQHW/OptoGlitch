@@ -158,7 +158,7 @@ Parse time: 03:00 min
 
 Parse time: 05:31 min
 
-Once again, the accuracy and time rises. Obviously an LED only a fixed ammount of time to fully change its brightness. As a result, it is isn't recommended to set this property to values above 10ms, as no notable improvements should be visible.
+Once again, the accuracy and time rises. Obviously an LED only a fixed amount of time to fully change its brightness. As a result, it is isn't recommended to set this property to values above 10ms, as no notable improvements should be visible.
 
 Utilizing both properties will clearly yield the best results, if those are desired:
 
@@ -173,6 +173,58 @@ Original:
 ![Samples and Transition](docs/img/SamplesAndTransition.png)
 
 Parse time: 08:34 min
+
+### Usage
+
+Since this project revolves primarily around the distortion of image files, I have written a host sided tool in python called [ParseImage.py](host/ParseImage.py), which reads an image and parses each pixel by pixel through the optocoupler via serial communication.
+
+The following python libraries have are utilized by [ParseImage.py](host/ParseImage.py):
+
+- [pySerial](https://pyserial.readthedocs.io/en/latest/index.html)
+- [Pillow](https://pillow.readthedocs.io/en/latest/)
+
+In addition to parsing, the tool provides parameters that permit the user to set specific firmware properties (calibration mode, transmission time, mean samples etc.) for the parsing session.
+
+```
+usage: ParseImage.py [-h] [-p PORT] [-b BAUD] [-c CALIBRATION] [-dt TIMEOUT]
+                     [-ht HOST_TIMEOUT] [-t TRANSITION] [-s SAMPLES]
+                     [-nmax NOISE_MAX] [-nmin NOISE_MIN]
+                     img
+
+Parses images through the Arduino optocoupler
+
+positional arguments:
+  img                   Path to an image file
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -p PORT, --port PORT  Serial port (Default '/dev/ttyACM0')
+  -b BAUD, --baud BAUD  Baud rate (Default 115200)
+  -c CALIBRATION, --calibration CALIBRATION
+                        Calibration mode (none, stddev, lookup)
+  -dt TIMEOUT, --timeout TIMEOUT
+                        Device serial communication timeout (Default 0, no
+                        timeout)
+  -ht HOST_TIMEOUT, --host_timeout HOST_TIMEOUT
+                        Host serial communication timeout (Default 0, no
+                        timeout)
+  -t TRANSITION, --transition TRANSITION
+                        Transition time for LED (Default 0, no transition
+                        time)
+  -s SAMPLES, --samples SAMPLES
+                        PR input samples to determine a mean reading (Default
+                        0, realy on a single sample only)
+  -nmax NOISE_MAX, --noise_max NOISE_MAX
+                        Maximum digitally generated noise
+  -nmin NOISE_MIN, --noise_min NOISE_MIN
+                        Minimum digitally generated noise
+```
+
+In the following example we parse an image with the calibration mode set to the **standard deviation**, the transmission time set to **1 ms** and the mean sample rate set at **50 samples**:
+
+```
+python ParseImage.py -c stddev -t 1 -s 50 image.png
+```
 
 ## Documentation
 
