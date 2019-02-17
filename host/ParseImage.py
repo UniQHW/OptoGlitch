@@ -84,7 +84,7 @@ arg_parser.add_argument('-c', '--calibration', type = str, default = 'lookup', h
 arg_parser.add_argument('-dt', '--timeout', type = int, default = 0, help = "Device serial communication timeout (Default 0, no timeout)")
 arg_parser.add_argument('-ht', '--host_timeout', type = int, default = 0, help = "Host serial communication timeout (Default 0, no timeout)")
 arg_parser.add_argument('-t', '--transition', type = int, default = 0, help = "Transition time for LED (Default 0, no transition time)")
-arg_parser.add_argument('-s', '--samples', type = int, default = 0, help = "PR input samples to determine a mean reading (Default 0, realy on a single sample only)")
+arg_parser.add_argument('-s', '--samples', type = int, default = 0, help = "PR input samples to determine a mean reading (Default 0, rely on a single sample only)")
 arg_parser.add_argument('-nmax', '--noise_max', type = int, default = 0, help = "Maximum digitally generated noise")
 arg_parser.add_argument('-nmin', '--noise_min', type = int, default = 0, help = "Minimum digitally generated noise")
 

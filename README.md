@@ -6,7 +6,12 @@ Turning an Arduino, a LED and a Photo Resistor into an physical glitch art filte
 
 ## Showcase
 
-![SegFault](docs/img/SegFault.png)
+Original:
+![Original](docs/img/Original.jpg)
+
+Parsed:
+![Parsed](docs/img/Parsed.png)
+
 
 ## Prelude
 
@@ -212,7 +217,7 @@ optional arguments:
                         time)
   -s SAMPLES, --samples SAMPLES
                         PR input samples to determine a mean reading (Default
-                        0, realy on a single sample only)
+                        0, rely on a single sample only)
   -nmax NOISE_MAX, --noise_max NOISE_MAX
                         Maximum digitally generated noise
   -nmin NOISE_MIN, --noise_min NOISE_MIN
