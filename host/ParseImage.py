@@ -136,7 +136,7 @@ for x in range(img.size[0]):
         progress_bar.update(1)
 
 # Save and close image
-img.save("Parsed.png")
+img.save("parsed_" + os.path.basename(args.image))
 img.close()
 
 # Send reset command
