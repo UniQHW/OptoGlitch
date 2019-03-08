@@ -53,7 +53,7 @@ The STL files for the 3D printed enclosure can be found here:
 The transmission of data is achieved by setting the LED to the brightness of the pixel value (ex. (255, 0, 120) would first set the LED to 255 brightness then 0 brightness and then 120 brightness). The photo resistor captures the brightness of the LED, and the software attempts match the photo resistor input to its original pixel value through various calibration methods. Since the process is analogous, it is prone to noise caused by external light sources. Additionally, the Arduino can only distinguish between a finite set of voltage levels. These, and many more factors result in erroneous readings, which are then responsible for the glitch aesthetics.
 
 #### Calibration
-Since the photo resistor readings don't exactly match the LED brightness, the Arduino software offers a total of two calibration modes, each compensating for the value deviation in a different way.
+Since the photo resistor readings are ranged in values 0 - 1023 (unlike the LEDs range of 0 - 255) and will substantially vary from the LED brightness, they must be calibrated for images not to become completely unrecognizable. The Arduino software offers a total of two calibration modes, each compensating for the value deviation in a different way.
 
 ##### Standard Deviation
 
@@ -88,6 +88,8 @@ If one desires to utilize photo resistor readings in their pure form, calibratio
 ```
 set cmode none
 ```
+
+In most cases this will yield very light images since the photo resistor readings can range from values 0 - 1023, thus any readings that are greater than 255 will be reduced to a value of 255.
 
 ##### Other properties
 
