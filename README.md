@@ -234,6 +234,10 @@ In the following example we parse an image with the calibration mode set to the 
 python ParseImage.py -c stddev -t 1 -s 50 image.png
 ```
 
+## Further reading
+
+If you are interested as to why the OptoGlitch produces some of its unique glitch artificats, then I encourage you to take a look at [this document](https://docs.google.com/document/d/e/2PACX-1vTJDHYFeyHswLxdAEP6sn3b4Up_VeRW9V8uCV8npATEVFgQjtauXVwJ1SELdUHYjfEbmOVUuMMBWK9t/pub), where I go as far as to inspect the device with an oscilloscope.
+
 ## License
 
 This project is licensed by the GPLv3
